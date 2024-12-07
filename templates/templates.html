@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        /* Flexbox na zarovnanie obsahu na pravú stranu */
+        .graph-container {
+    position: absolute;
+    left: 500px;
+    top: 200px;
+    }
+
+    </style>
+    <title>Predpokladaný výstup z FV panelov</title>
+    <style>
+        body {
+            background-image: url('{{ url_for('static', filename='background.jpeg') }}');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            color: black;
+            height: 100vh;
+            padding-top: 20px;
+
+        }
+
+        h1, h3 {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            margin-top: 0;
+        }
+
+        form {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            margin-left: 50px; /* Posunutie formulára doľava */
+            margin-top: 10px;
+
+            position: relative;
+        }
+
+        form p {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input[type="number"] {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="submit"] {
+            width: 90%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        /* Styling for the error message */
+        .error {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .graph-container {
+            margin-top: 20px;
+            text-align: center;
+            width: 120px
+        }
+
+        /* Styling for the return button */
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Predpokladaný výstup z FV panelov počas roka podľa mesta</h1>
+    <h4 style="text-align: center;">Predictable photovoltaic output throughout the year in your selected city</h4>
+
+
+    <form action="/main_app" method="post">
+        <p>Zadaj súradnice mesta - Z. šírka (Enter coordinates of the city - latitude):</p>
+        <input type="number" name="latitude" step="any" required>
+
+        <p>Zadaj súradnice mesta - Z. dĺžka (Enter coordinates of the city - longitude):</p>
+        <input type="number" name="longitude" step="any" required> <!-- #any= float numbers -->
+
+        <input type="submit" value="Enter">
+
+        <!-- chyba pri zlych suradniciach / alert info if wrong coordinates -->
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+    </form>
+    {% if graphJSON %}
+        <div class="graph-container">
+
+            <div id="chart"></div>
+        </div>
+
+        <script>
+            var graphs = {{ graphJSON | safe }};
+            Plotly.newPlot('chart', graphs.data, graphs.layout);
+        </script>
+    {% endif %}
+
+</body>
+</html>
