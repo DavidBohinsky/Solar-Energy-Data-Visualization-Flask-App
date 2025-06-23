@@ -130,16 +130,10 @@
             <div class="error">{{ error }}</div>
         {% endif %}
     </form>
-    {% if graphJSON %}
-        <div class="graph-container">
-
-            <div id="chart"></div>
+   {% if graph_html %}
+        <div id="graf">
+            {{ graph_html | safe }}
         </div>
-
-        <script>
-            var graphs = {{ graphJSON | safe }};
-            Plotly.newPlot('chart', graphs.data, graphs.layout);
-        </script>
     {% endif %}
 
 </body>

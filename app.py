@@ -5,6 +5,7 @@ import plotly.express as px
 import plotly
 import calendar as cal
 
+from plotly.offline import plot
 
 app = Flask(__name__)
 
@@ -52,12 +53,13 @@ def main_app():
         print(city)
         outputs_ac = data['outputs']['ac_monthly']
         outputs_ac = [round(value) for value in outputs_ac]
+        print(outputs_ac)
 
 
         x = list(cal.month_name[1:])            # Graph making
         y = outputs_ac
 
-        graph = px.bar(x=x, y=y, labels={'x': '', 'y': 'kWh/h'}, title= f'City: {city}')
+        graph = px.bar(x=x, y=y, labels={'x': 'months', 'y': 'kWh/h'}, title= f'City: {city}')
 
         graph.update_layout(
             width=1400,
@@ -66,9 +68,14 @@ def main_app():
         )
 
 
-        graphJSON = json.dumps(graph, cls=plotly.utils.PlotlyJSONEncoder)    # ChatGPT
 
-        return render_template('templates.html', graphJSON=graphJSON)
+
+
+        graph_html = plot(graph, include_plotlyjs='cdn', output_type='div')   # ChatGPT  - plot - funkcia z kniznice plotly offline,
+                                                # "cdn" - skripty potrebne na zobrazenie grafu sa vkladaju ako odkaz na externe CDN, pre rychlejsie nacitanie
+
+        return render_template('templates.html', graph_html=graph_html)
+
     else:
         return home()
 
